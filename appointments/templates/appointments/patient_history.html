@@ -1,0 +1,53 @@
+{% extends "appointments/base.html" %}
+{% block title %}Medical History{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{% url 'patient_list' %}" class="text-decoration-none small fw-bold text-primary"><i class="bi bi-arrow-left"></i> Back to Patients</a>
+    <h1 class="h3 mt-2 fw-bold" style="color: #101a3a;">Medical History: {{ patient.first_name }} {{ patient.last_name }}</h1>
+</div>
+
+{% for record in records %}
+<div class="card shadow-sm border-0 premium-card mb-4">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+            <div>
+                <h5 class="fw-bold text-primary mb-1">{{ record.diagnosis }}</h5>
+                <span class="text-muted small"><i class="bi bi-calendar-event"></i> {{ record.date|date:"M d, Y" }}</span>
+            </div>
+            <span class="badge bg-info text-dark px-3 py-2" style="border-radius: 8px;">
+                <i class="bi bi-robot"></i> AI Verified Slot
+            </span>
+        </div>
+        
+        <div class="mb-3">
+            <strong>Attending Physician:</strong> 
+            <span class="text-dark fw-bold">Dr. {{ record.doctor.user.username }}</span> 
+        </div>
+
+        <div class="mb-3">
+            <strong>Treatment Plan:</strong>
+            <p class="text-muted">{{ record.treatment }}</p>
+        </div>
+
+        <div class="p-3 rounded-3" style="background: rgba(123, 44, 255, 0.05); border-left: 4px solid #7b2cff;">
+            <h6 class="small fw-bold text-uppercase" style="color: #7b2cff;">
+                <i class="bi bi-stars"></i> AI Scheduling Insight
+            </h6>
+            <p class="small mb-0 text-muted">
+                This record is linked to an appointment optimized by the AI Engine. The patient was matched with <strong>Dr. {{ record.doctor.user.username }}</strong> based on specialization and workload scores.
+            </p>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="card shadow-sm border-0 premium-card p-5 text-center">
+    <p class="text-muted mb-0">No medical records found for this patient.</p>
+</div>
+<a href="{% url 'add_medical_record' patient.id %}" 
+   class="btn btn-primary px-4 py-2"
+   style="background:#0d9488;border:none;border-radius:8px;font-size:0.875rem;font-weight:600;">
+  <i class="bi bi-file-earmark-plus"></i> Add Report
+</a>
+{% endfor %}
+{% endblock %}

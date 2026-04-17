@@ -1,0 +1,166 @@
+{% extends "appointments/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Login — Hospital System{% endblock %}
+
+{% block content %}
+<style>
+  .auth-wrap {
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .auth-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    overflow: hidden;
+    width: 100%;
+    max-width: 960px;
+  }
+  .auth-left {
+    background: linear-gradient(160deg, #0a1628 0%, #112240 50%, #0d3050 100%);
+    padding: 3.5rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .auth-left::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(13,148,136,0.25), transparent 70%);
+    border-radius: 50%;
+  }
+  .auth-left::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(212,168,83,0.12), transparent 70%);
+    border-radius: 50%;
+  }
+  .auth-left-content { position: relative; z-index: 1; }
+  .auth-tagline {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+  }
+  .auth-tagline span { color: #5eead4; }
+  .auth-desc {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+  .auth-feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+  .auth-feature i {
+    color: #5eead4;
+    font-size: 0.9rem;
+  }
+  .auth-right {
+    padding: 3rem 2.5rem;
+    background: #ffffff;
+  }
+  .auth-right-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #0a1628;
+    margin-bottom: 0.4rem;
+  }
+  .auth-right-sub {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
+  .btn-auth {
+    background: #0d9488;
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.2s ease;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-auth:hover {
+    background: #14b8a6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(13,148,136,0.3);
+    color: #fff;
+  }
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    color: #cbd5e1;
+    font-size: 0.8rem;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+  }
+</style>
+
+<div class="auth-wrap">
+  <div class="auth-card fade-in fade-in-1">
+    <div class="row g-0">
+
+      <div class="col-md-5 auth-left d-none d-md-flex">
+        <div class="auth-left-content">
+          <div style="width:44px;height:44px;background:rgba(13,148,136,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;">
+            <i class="bi bi-shield-check" style="color:#5eead4;font-size:1.2rem;"></i>
+          </div>
+          <h2 class="auth-tagline">Welcome<br>back to <span>CarePortal</span></h2>
+          <p class="auth-desc">Access your healthcare portal securely. Manage appointments, view records and connect with your care team.</p>
+          <div class="auth-feature"><i class="bi bi-check-circle-fill"></i> AI-powered appointment matching</div>
+          <div class="auth-feature"><i class="bi bi-check-circle-fill"></i> Secure role-based access</div>
+          <div class="auth-feature"><i class="bi bi-check-circle-fill"></i> Instant medical term explanations</div>
+          <div class="auth-feature"><i class="bi bi-check-circle-fill"></i> Real-time analytics dashboard</div>
+        </div>
+      </div>
+
+      <div class="col-md-7 auth-right">
+        <h2 class="auth-right-title">Sign in</h2>
+        <p class="auth-right-sub">Enter your credentials to access your account</p>
+
+        <form method="POST">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <button class="btn-auth mt-3" type="submit">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+          </button>
+        </form>
+
+        <div class="divider">or</div>
+
+        <p class="text-center mb-0" style="font-size:0.875rem;color:#94a3b8;">
+          Don't have an account?
+          <a href="{% url 'register' %}" style="color:#0d9488;font-weight:600;text-decoration:none;">Create one here</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

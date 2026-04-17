@@ -1,0 +1,33 @@
+{% extends "appointments/base.html" %}
+{% block title %}Logged Out{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-sm border-0 premium-card text-center p-5">
+      
+      <div class="mb-4">
+        <i class="bi bi-box-arrow-right text-primary" style="font-size: 3rem;"></i>
+      </div>
+      
+      <h1 class="h4 mb-2" style="color: #101a3a; font-weight: 700;">
+        You have been logged out
+      </h1>
+      
+      <p class="text-muted mb-4">
+        Thank you for using Hospital System. Your session has been ended safely.
+      </p>
+
+      <div class="d-flex gap-3 justify-content-center">
+        <a href="{% url 'login' %}" class="btn btn-primary px-4 py-2" style="background: linear-gradient(135deg,#2f5bff,#7b2cff); border: none; border-radius: 8px;">
+          <i class="bi bi-box-arrow-in-right"></i> Login Again
+        </a>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary px-4 py-2" style="border-radius: 8px;">
+          <i class="bi bi-house-door"></i> Home
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

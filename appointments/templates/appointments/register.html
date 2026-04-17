@@ -1,0 +1,114 @@
+{% extends "appointments/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Register — Hospital System{% endblock %}
+
+{% block content %}
+<style>
+  .auth-wrap {
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+  .register-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    width: 100%;
+    max-width: 580px;
+    padding: 2.5rem 2.5rem;
+  }
+  .register-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .register-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(13,148,136,0.1);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.4rem;
+    color: #0d9488;
+  }
+  .register-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #0a1628;
+    margin-bottom: 0.3rem;
+  }
+  .register-sub {
+    color: #94a3b8;
+    font-size: 0.875rem;
+  }
+  .btn-register {
+    background: #0d9488;
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.2s ease;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 0.5rem;
+  }
+  .btn-register:hover {
+    background: #14b8a6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(13,148,136,0.3);
+    color: #fff;
+  }
+  .privacy-note {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    color: #0f766e;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+</style>
+
+<div class="auth-wrap">
+  <div class="register-card fade-in fade-in-1">
+
+    <div class="register-header">
+      <div class="register-icon">
+        <i class="bi bi-person-plus-fill"></i>
+      </div>
+      <h2 class="register-title">Create Your Account</h2>
+      <p class="register-sub">Join the Hospital System patient portal</p>
+    </div>
+
+    <div class="privacy-note">
+      <i class="bi bi-shield-lock-fill" style="font-size:0.9rem;margin-top:1px;flex-shrink:0;"></i>
+      <span>Your data is protected under UK GDPR. We only collect what is necessary for appointment management.</span>
+    </div>
+
+    <form method="POST">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button class="btn-register" type="submit">
+        <i class="bi bi-person-check me-2"></i>Create Account
+      </button>
+    </form>
+
+    <p class="text-center mt-4 mb-0" style="font-size:0.875rem;color:#94a3b8;">
+      Already have an account?
+      <a href="{% url 'login' %}" style="color:#0d9488;font-weight:600;text-decoration:none;">Sign in here</a>
+    </p>
+
+  </div>
+</div>
+{% endblock %}

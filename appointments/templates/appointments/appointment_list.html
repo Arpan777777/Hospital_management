@@ -1,0 +1,243 @@
+{% extends "appointments/base.html" %}
+{% block title %}Appointments{% endblock %}
+
+{% block content %}
+<style>
+  .page-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0d9488;
+    margin-bottom: 0.3rem;
+  }
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #0a1628;
+    margin: 0;
+  }
+  .page-sub {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin: 0.25rem 0 0;
+  }
+  .appt-table {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .appt-table table { margin: 0; }
+  .appt-table thead th {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #94a3b8;
+    background: #f8f9fc !important;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.9rem 1.25rem;
+  }
+  .appt-table tbody td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+  .appt-table tbody tr:last-child td { border-bottom: none; }
+  .appt-table tbody tr:hover { background: #f0fdfa; }
+  .status-confirmed {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+  }
+  .status-completed {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+  }
+  .btn-cancel {
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.35rem 0.85rem;
+    border-radius: 6px;
+    border: 1.5px solid #fecaca;
+    background: #fff;
+    color: #dc2626;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-cancel:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #dc2626;
+  }
+  .btn-add {
+    background: #0d9488;
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-add:hover {
+    background: #14b8a6;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+  .doctor-name {
+    font-weight: 600;
+    color: #0a1628;
+    font-size: 0.875rem;
+  }
+  .appt-time {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+  .patient-name {
+    font-weight: 600;
+    color: #0a1628;
+    font-size: 0.875rem;
+  }
+  .reason-text {
+    font-size: 0.875rem;
+    color: #64748b;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  .empty-state i {
+    font-size: 2.5rem;
+    color: #e2e8f0;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .empty-state h5 {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    color: #64748b;
+  }
+</style>
+
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-start mb-4 fade-in fade-in-1">
+  <div>
+    <div class="page-label">Schedule</div>
+    <h1 class="page-title">Appointments</h1>
+    <p class="page-sub">View and manage all scheduled patient visits</p>
+  </div>
+</div>
+
+<div class="d-flex gap-2">
+  <a href="{% url 'export_appointments_csv' %}" 
+     class="btn-add" 
+     style="background:#059669;">
+    <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+  </a>
+  <a href="{% url 'book_appointment' %}" class="btn-add">
+    <i class="bi bi-plus-circle-fill"></i> Book New
+  </a>
+</div>
+
+<!-- Table -->
+<div class="appt-table fade-in fade-in-2">
+  <table class="table table-borderless mb-0">
+    <thead>
+      <tr>
+        <th>Patient</th>
+        <th>Doctor & Time</th>
+        <th>Reason</th>
+        <th class="text-end">Status & Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for appt in appointments %}
+      <tr>
+        <td>
+          <div class="patient-name">
+            {% if appt.patient %}
+              {{ appt.patient.first_name }} {{ appt.patient.last_name }}
+            {% else %}
+              {{ appt.user.username }}
+            {% endif %}
+          </div>
+        </td>
+        <td>
+          <div class="doctor-name">
+            <i class="bi bi-person-badge" style="color:#0d9488;"></i>
+            {{ appt.slot.doctor }}
+          </div>
+          <div class="appt-time">
+            <i class="bi bi-clock"></i> {{ appt.slot.start_time }}
+          </div>
+        </td>
+        <td>
+          <span class="reason-text">{{ appt.reason|default:"—" }}</span>
+        </td>
+        <td class="text-end">
+          <div class="d-flex justify-content-end align-items-center gap-2">
+            {% if appt.status == 'completed' %}
+              <span class="status-completed">
+                <i class="bi bi-check-all"></i> Completed
+              </span>
+            {% else %}
+              <span class="status-confirmed">
+                <i class="bi bi-check-circle-fill"></i> Confirmed
+              </span>
+              <a href="{% url 'cancel_appointment' appt.id %}"
+                 class="btn-cancel"
+                 onclick="return confirm('Cancel this appointment?');">
+                <i class="bi bi-x"></i> Cancel
+              </a>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4">
+          <div class="empty-state">
+            <i class="bi bi-calendar-x"></i>
+            <h5>No appointments found</h5>
+            <p class="text-muted mb-3">No appointments have been scheduled yet.</p>
+            <a href="{% url 'book_appointment' %}" class="btn-add">
+              Book First Appointment
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "appointments/base.html" %}
+{% block title %}Add Medical Report{% endblock %}
+
+{% block content %}
+<style>
+  .page-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0d9488;
+    margin-bottom: 0.3rem;
+  }
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #0a1628;
+    margin: 0 0 0.25rem;
+  }
+  .page-sub { color: #94a3b8; font-size: 0.875rem; margin: 0; }
+  .report-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .form-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    margin-bottom: 0.4rem;
+  }
+  .form-control, .form-select {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    font-family: 'DM Sans', sans-serif;
+    color: #1e293b;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .form-control:focus, .form-select:focus {
+    border-color: #0d9488;
+    box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
+    outline: none;
+  }
+  textarea.form-control { resize: vertical; min-height: 100px; }
+  .btn-save {
+    background: #0d9488;
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    padding: 0.75rem 2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s ease;
+  }
+  .btn-save:hover {
+    background: #14b8a6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13,148,136,0.3);
+    color: #fff;
+  }
+  .patient-banner {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .patient-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d9488, #0f766e);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .patient-banner-name {
+    font-weight: 600;
+    color: #0a1628;
+    font-size: 0.9rem;
+  }
+  .patient-banner-sub {
+    font-size: 0.8rem;
+    color: #0d9488;
+  }
+</style>
+
+<div class="mb-4 fade-in fade-in-1">
+  <a href="{% url 'patient_history' patient.id %}" 
+     style="font-size:0.85rem;color:#0d9488;text-decoration:none;font-weight:600;">
+    <i class="bi bi-arrow-left"></i> Back to Patient History
+  </a>
+</div>
+
+<div class="mb-4 fade-in fade-in-1">
+  <div class="page-label">Medical Records</div>
+  <h1 class="page-title">Add Medical Report</h1>
+  <p class="page-sub">Create a new medical record for this patient</p>
+</div>
+
+<div class="report-card fade-in fade-in-2">
+
+  <div class="patient-banner">
+    <div class="patient-avatar">
+      {{ patient.first_name|first }}{{ patient.last_name|first }}
+    </div>
+    <div>
+      <div class="patient-banner-name">{{ patient.first_name }} {{ patient.last_name }}</div>
+      <div class="patient-banner-sub">Adding report for this patient</div>
+    </div>
+  </div>
+
+  <form method="POST" class="row g-3">
+    {% csrf_token %}
+
+    <div class="col-12">
+      <label class="form-label">Attending Doctor</label>
+      <select class="form-select" name="doctor" required>
+        <option value="">-- Select Doctor --</option>
+        {% for doctor in doctors %}
+          <option value="{{ doctor.id }}">
+            Dr. {{ doctor.first_name }} {{ doctor.last_name }} ({{ doctor.specialization }})
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label">Diagnosis</label>
+      <input
+        type="text"
+        class="form-control"
+        name="diagnosis"
+        placeholder="e.g. Acute Seasonal Influenza"
+        required>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label">Treatment Plan</label>
+      <textarea
+        class="form-control"
+        name="treatment"
+        placeholder="e.g. Prescribed Oseltamivir 75mg; Recommended 5 days of bed rest..."
+        required></textarea>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label">Additional Notes <span style="color:#94a3b8;font-weight:400;text-transform:none;">(optional)</span></label>
+      <textarea
+        class="form-control"
+        name="notes"
+        placeholder="Any additional notes for this patient..."
+        style="min-height:80px;"></textarea>
+    </div>
+
+    <div class="col-12 mt-2 d-flex gap-3">
+      <button class="btn-save" type="submit">
+        <i class="bi bi-file-earmark-plus me-2"></i>Save Report
+      </button>
+      <a href="{% url 'patient_history' patient.id %}"
+         style="padding:0.75rem 1.5rem;border-radius:8px;background:#f1f5f9;color:#475569;font-weight:600;font-size:0.9rem;text-decoration:none;font-family:'DM Sans',sans-serif;">
+        Cancel
+      </a>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

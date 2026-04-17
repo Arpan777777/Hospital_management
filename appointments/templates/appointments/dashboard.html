@@ -1,0 +1,63 @@
+{% extends "appointments/base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1" style="color: #101a3a; font-weight: 700;">
+            <i class="bi bi-speedometer2 text-primary"></i> Admin Dashboard
+        </h1>
+        <p class="text-muted mb-0">Management overview and data reporting.</p>
+    </div>
+    <a href="{% url 'export_appointments_csv' %}" class="btn btn-success shadow-sm px-4 py-2" style="border-radius: 8px;">
+        <i class="bi bi-file-earmark-spreadsheet"></i> Export Appointments (CSV)
+    </a>
+</div>
+<div class="row g-4 mb-4">
+    </div>
+
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm premium-card text-center p-3">
+            <div class="text-primary fs-2 mb-2"><i class="bi bi-people-fill"></i></div>
+            <h6 class="text-muted fw-bold">Total Patients</h6>
+            <h2 class="fw-bold mb-0">{{ total_patients }}</h2>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm premium-card text-center p-3">
+            <div class="text-info fs-2 mb-2"><i class="bi bi-calendar-check-fill"></i></div>
+            <h6 class="text-muted fw-bold">Appointments</h6>
+            <h2 class="fw-bold mb-0">{{ total_appointments }}</h2>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm premium-card text-center p-3">
+            <div class="text-success fs-2 mb-2"><i class="bi bi-door-open-fill"></i></div>
+            <h6 class="text-muted fw-bold">Available Slots</h6>
+            <h2 class="fw-bold mb-0">{{ free_slots }}</h2>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card border-0 shadow-sm premium-card text-center p-3" style="background: rgba(47, 91, 255, 0.05);">
+            <div class="text-warning fs-2 mb-2"><i class="bi bi-star-fill"></i></div>
+            <h6 class="text-muted fw-bold">Busiest Doctor</h6>
+            <h2 class="h5 fw-bold mb-0 text-truncate px-2">{{ busiest_doctor.name|default:"N/A" }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm premium-card p-4">
+            <h5 class="fw-bold mb-3">Quick Management Links</h5>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'patient_list' %}" class="btn btn-outline-primary px-4">View All Patients</a>
+                <a href="{% url 'appointment_list' %}" class="btn btn-outline-primary px-4">View All Appointments</a>
+                <a href="{% url 'ai_analytics' %}" class="btn btn-outline-primary px-4">View AI Traffic Data</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

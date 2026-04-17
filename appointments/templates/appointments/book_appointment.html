@@ -1,0 +1,167 @@
+{% extends "appointments/base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Book Appointment{% endblock %}
+
+{% block content %}
+<style>
+  .book-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .book-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  }
+  .book-left {
+    background: linear-gradient(160deg, #0a1628 0%, #0d2847 100%);
+    padding: 3rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .book-left::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    background: radial-gradient(circle, rgba(13,148,136,0.2), transparent 70%);
+    border-radius: 50%;
+  }
+  .book-left-content { position: relative; z-index: 1; }
+  .book-left-icon {
+    width: 56px;
+    height: 56px;
+    background: rgba(13,148,136,0.15);
+    border: 1px solid rgba(13,148,136,0.3);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: #5eead4;
+    margin-bottom: 1.5rem;
+  }
+  .book-left-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+  .book-left-title span { color: #5eead4; }
+  .book-left-desc {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+  .book-feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,0.65);
+    font-size: 0.83rem;
+    margin-bottom: 0.75rem;
+  }
+  .book-feature i { color: #5eead4; }
+  .book-right {
+    padding: 3rem 2.5rem;
+  }
+  .book-right-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0d9488;
+    margin-bottom: 0.3rem;
+  }
+  .book-right-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0a1628;
+    margin-bottom: 0.3rem;
+  }
+  .book-right-sub {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+  }
+  .btn-book {
+    background: #0d9488;
+    border: none;
+    color: #fff;
+    border-radius: 10px;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.2s ease;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 1.5rem;
+  }
+  .btn-book:hover {
+    background: #14b8a6;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(13,148,136,0.3);
+    color: #fff;
+  }
+  .btn-cancel-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .btn-cancel-link:hover { color: #475569; }
+</style>
+
+<div class="book-wrap fade-in fade-in-1">
+  <div class="book-card">
+    <div class="row g-0">
+
+      <!-- Left Panel -->
+      <div class="col-md-5 book-left d-none d-md-block">
+        <div class="book-left-content">
+          <div class="book-left-icon">
+            <i class="bi bi-calendar-heart"></i>
+          </div>
+          <h2 class="book-left-title">Your Health,<br><span>Our Priority.</span></h2>
+          <p class="book-left-desc">
+            Schedule a visit with our specialists in just a few clicks. We match you with the right doctor for your needs.
+          </p>
+          <div class="book-feature"><i class="bi bi-check-circle-fill"></i> No hidden booking fees</div>
+          <div class="book-feature"><i class="bi bi-check-circle-fill"></i> AI-matched specialists</div>
+          <div class="book-feature"><i class="bi bi-check-circle-fill"></i> Instant confirmation</div>
+          <div class="book-feature"><i class="bi bi-check-circle-fill"></i> Easy cancellation</div>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="col-md-7 book-right">
+        <div class="book-right-label">New Appointment</div>
+        <h2 class="book-right-title">Book a Visit</h2>
+        <p class="book-right-sub">Select an available slot and describe your reason for visiting.</p>
+
+        <form method="POST">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <button class="btn-book" type="submit">
+            <i class="bi bi-calendar-check me-2"></i>Confirm Booking
+          </button>
+        </form>
+
+        <a href="{% url 'appointment_list' %}" class="btn-cancel-link">
+          Cancel and go back
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

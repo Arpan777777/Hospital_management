@@ -1,0 +1,120 @@
+{% extends "appointments/base.html" %}
+{% block title %}AI Analytics{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h3 mb-1" style="color: #101a3a; font-weight: 700;"><i class="bi bi-graph-up text-primary"></i> AI Analytics</h1>
+    <div class="text-muted">Based on appointments in the last 30 days</div>
+  </div>
+  <span class="badge rounded-pill px-4 py-2" style="background: linear-gradient(135deg,#2f5bff,#7b2cff); font-size: 1rem;">Total: {{ total_30d }}</span>
+</div>
+
+{% if total_30d == 0 %}
+  <div class="alert alert-warning border-0 shadow-sm" style="border-radius: 12px;">
+    <i class="bi bi-exclamation-triangle"></i> No appointments found in the last 30 days. Book some appointments first to see analytics.
+  </div>
+{% endif %}
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm border-0 premium-card h-100">
+      <div class="card-body p-4">
+        <h2 class="h5 mb-4 text-center" style="font-weight: 600; color: #101a3a;">Busiest Hours</h2>
+        <canvas id="hoursChart" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card shadow-sm border-0 premium-card h-100">
+      <div class="card-body p-4">
+        <h2 class="h5 mb-4 text-center" style="font-weight: 600; color: #101a3a;">Busiest Days</h2>
+        <canvas id="daysChart" height="160"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card shadow-sm border-0 premium-card mt-4">
+  <div class="card-body p-4 d-flex align-items-start gap-3">
+    <div class="text-primary fs-1"><i class="bi bi-lightbulb"></i></div>
+    <div>
+      <h2 class="h5 mb-2" style="font-weight: 600; color: #101a3a;">How the AI Insight Works</h2>
+      <p class="text-muted mb-0" style="line-height: 1.6;">
+        The system analyzes appointment history and finds peak demand periods (busy hours and busy days). 
+        This data directly feeds into our AI Recommendation engine to balance doctor workloads and suggest less congested time slots to patients.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+{{ hours|json_script:"hours-data" }}
+{{ days|json_script:"days-data" }}
+{{ day_labels|json_script:"daylabels-data" }}
+
+<script>
+  const hours = JSON.parse(document.getElementById("hours-data").textContent);
+  const days = JSON.parse(document.getElementById("days-data").textContent);
+  const dayLabels = JSON.parse(document.getElementById("daylabels-data").textContent);
+
+  const hourLabels = Array.from({length: 24}, (_, i) => (i < 10 ? "0"+i : ""+i) + ":00");
+
+  // Chart Configuration for Premium Look
+  Chart.defaults.font.family = "'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
+  Chart.defaults.color = '#8b95a5';
+
+  new Chart(document.getElementById("hoursChart"), {
+    type: "line",
+    data: {
+      labels: hourLabels,
+      datasets: [{
+        label: "Appointments",
+        data: hours,
+        tension: 0.4, // Smoother curve
+        borderColor: "#2f5bff",
+        backgroundColor: "rgba(47, 91, 255, 0.1)",
+        borderWidth: 3,
+        fill: true,
+        pointBackgroundColor: "#ffffff",
+        pointBorderColor: "#2f5bff",
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { 
+        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { borderDash: [5, 5], color: '#f0f2f5' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  new Chart(document.getElementById("daysChart"), {
+    type: "bar",
+    data: {
+      labels: dayLabels,
+      datasets: [{
+        label: "Appointments",
+        data: days,
+        backgroundColor: "#7b2cff",
+        borderRadius: 6, // Rounded bars
+        barPercentage: 0.6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { 
+        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { borderDash: [5, 5], color: '#f0f2f5' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+</script>
+{% endblock %}

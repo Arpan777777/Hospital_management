@@ -1,0 +1,244 @@
+{% extends "appointments/base.html" %}
+{% block title %}My Medical Reports{% endblock %}
+
+{% block content %}
+<style>
+  .medical-term {
+    background: rgba(47, 91, 255, 0.08);
+    color: #2f5bff;
+    border-bottom: 2px dashed #2f5bff;
+    cursor: pointer;
+    padding: 1px 3px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+  }
+  .medical-term:hover {
+    background: rgba(47, 91, 255, 0.18);
+  }
+  .explainer-modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+  .explainer-modal.active {
+    display: flex;
+  }
+  .explainer-box {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    position: relative;
+    animation: popIn 0.25s ease;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .explainer-term {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #101a3a;
+    margin-bottom: 0.5rem;
+  }
+  .explainer-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #2f5bff, #7b2cff);
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  .explainer-content {
+    color: #444;
+    line-height: 1.7;
+    font-size: 0.95rem;
+  }
+  .explainer-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #888;
+    font-size: 0.9rem;
+  }
+  .spinner {
+    width: 20px; height: 20px;
+    border: 3px solid #e0e4ec;
+    border-top-color: #2f5bff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .explainer-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: #f1f3f8;
+    border: none;
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #555;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .explainer-close:hover { background: #e0e4ec; }
+  .disclaimer {
+    margin-top: 1rem;
+    padding: 0.6rem 0.9rem;
+    background: #fff8e1;
+    border-left: 3px solid #ffc107;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    color: #7a6000;
+  }
+  .hint-bar {
+    background: rgba(47,91,255,0.06);
+    border: 1px dashed rgba(47,91,255,0.3);
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    color: #2f5bff;
+    margin-bottom: 1.5rem;
+  }
+</style>
+
+<h1 class="h3 mb-2 fw-bold" style="color:#101a3a;">My Medical Reports</h1>
+
+{% if records %}
+<div class="hint-bar mb-4">
+  <i class="bi bi-stars"></i> <strong>AI Term Explainer:</strong> Click on any
+  <span class="medical-term" style="cursor:default;">highlighted medical term</span>
+  to get a plain-language explanation powered by AI.
+</div>
+{% endif %}
+
+{% for record in records %}
+<div class="card shadow-sm border-0 premium-card mb-4">
+  <div class="card-body p-4">
+    <div class="d-flex justify-content-between mb-3">
+      <h5 class="fw-bold text-primary">
+        <span class="medical-term" onclick="explainTerm(this)">{{ record.diagnosis }}</span>
+      </h5>
+      <span class="text-muted small"><i class="bi bi-calendar-event"></i> {{ record.date }}</span>
+    </div>
+
+    <p>
+      <strong>Doctor:</strong> Dr. {{ record.doctor.user.username }}
+    </p>
+
+    <p>
+      <strong>Treatment:</strong>
+      <span class="medical-term" onclick="explainTerm(this)">{{ record.treatment }}</span>
+    </p>
+
+    {% if record.notes %}
+    <p>
+      <strong>Notes:</strong>
+      <span class="text-muted">{{ record.notes }}</span>
+    </p>
+    {% endif %}
+
+    <div class="p-3 rounded-3 mt-3" style="background: rgba(47, 91, 255, 0.05); border: 1px dashed #2f5bff;">
+      <h6 class="small fw-bold text-primary mb-1">
+        <i class="bi bi-stars"></i> AI Insight
+      </h6>
+      <p class="small mb-0 text-muted">
+        Consultation prioritized via AI workload balancing. Click any highlighted term above for a plain-language explanation.
+      </p>
+    </div>
+  </div>
+</div>
+{% empty %}
+<div class="card shadow-sm border-0 premium-card p-5 text-center">
+  <i class="bi bi-file-earmark-medical fs-1 text-primary opacity-50 mb-3 d-block"></i>
+  <h5 class="fw-semibold">No reports available yet</h5>
+  <p class="text-muted mb-0">Your medical reports will appear here once added by your doctor.</p>
+</div>
+{% endfor %}
+
+<!-- AI Explainer Modal -->
+<div class="explainer-modal" id="explainerModal" onclick="closeModal(event)">
+  <div class="explainer-box">
+    <button class="explainer-close" onclick="closeExplainer()">&#x2715;</button>
+    <div class="explainer-badge"><i class="bi bi-stars"></i> AI Medical Explainer</div>
+    <div class="explainer-term" id="explainerTerm"></div>
+    <div class="explainer-content" id="explainerContent">
+      <div class="explainer-loading">
+        <div class="spinner"></div>
+        <span>Getting plain-language explanation...</span>
+      </div>
+    </div>
+    <div class="disclaimer">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <strong>Note:</strong> This explanation is for general guidance only and is not medical advice. Always consult your doctor for clinical decisions.
+    </div>
+  </div>
+</div>
+
+<script>
+  async function explainTerm(el) {
+    const term = el.innerText.trim();
+    if (!term) return;
+
+    document.getElementById('explainerTerm').innerText = term;
+    document.getElementById('explainerContent').innerHTML = `
+      <div class="explainer-loading">
+        <div class="spinner"></div>
+        <span>Getting plain-language explanation...</span>
+      </div>`;
+    document.getElementById('explainerModal').classList.add('active');
+
+    try {
+      const response = await fetch('/appointments/ai-explain/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ term: term })
+      });
+
+      const data = await response.json();
+      document.getElementById('explainerContent').innerText = data.explanation || 'No explanation available.';
+    } catch (err) {
+      document.getElementById('explainerContent').innerText = 'Sorry, could not fetch explanation right now. Please try again.';
+    }
+  }
+
+  function closeExplainer() {
+    document.getElementById('explainerModal').classList.remove('active');
+  }
+
+  function closeModal(event) {
+    if (event.target === document.getElementById('explainerModal')) {
+      closeExplainer();
+    }
+  }
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "appointments/base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+
+    <div class="card shadow-sm border-0 premium-card mb-4">
+      <div class="card-body p-4 p-md-5">
+
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#2f5bff,#7b2cff);display:flex;align-items:center;justify-content:center;">
+            <i class="bi bi-person-fill text-white fs-3"></i>
+          </div>
+          <div>
+            <h1 class="h4 mb-0 fw-bold" style="color:#101a3a;">
+              {{ patient.first_name }} {{ patient.last_name }}
+            </h1>
+            <span class="badge rounded-pill px-3 py-1" style="background:rgba(47,91,255,0.1);color:#2f5bff;">
+              Patient
+            </span>
+          </div>
+        </div>
+
+        <form method="POST" class="row g-3">
+          {% csrf_token %}
+
+          <div class="col-md-6">
+            <label class="form-label text-muted fw-semibold">First Name</label>
+            <input 
+              type="text" 
+              class="form-control form-control-lg" 
+              name="first_name" 
+              value="{{ patient.first_name }}" 
+              required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-muted fw-semibold">Last Name</label>
+            <input 
+              type="text" 
+              class="form-control form-control-lg" 
+              name="last_name" 
+              value="{{ patient.last_name }}" 
+              required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-muted fw-semibold">Email Address</label>
+            <input 
+              type="email" 
+              class="form-control form-control-lg" 
+              name="email" 
+              value="{{ patient.email }}" 
+              required>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-muted fw-semibold">Phone Number</label>
+            <input 
+              type="text" 
+              class="form-control form-control-lg" 
+              name="phone_number" 
+              value="{{ patient.phone_number }}" 
+              required>
+          </div>
+
+          <div class="col-12 mt-3">
+            <button class="btn btn-primary w-100 py-2 fw-bold" 
+              style="background:linear-gradient(135deg,#2f5bff,#7b2cff);border:none;border-radius:10px;" 
+              type="submit">
+              <i class="bi bi-save"></i> Save Changes
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-0 premium-card">
+      <div class="card-body p-4">
+        <h5 class="fw-bold mb-3" style="color:#101a3a;">Quick Links</h5>
+        <div class="d-flex gap-2 flex-wrap">
+          <a href="{% url 'my_appointments' %}" class="btn btn-outline-primary px-4">
+            <i class="bi bi-clock-history"></i> My Appointments
+          </a>
+          <a href="{% url 'my_medical_records' %}" class="btn btn-outline-primary px-4">
+            <i class="bi bi-file-earmark-medical"></i> My Reports
+          </a>
+          <a href="{% url 'ai_recommend' %}" class="btn btn-outline-primary px-4">
+            <i class="bi bi-stars"></i> AI Recommend
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

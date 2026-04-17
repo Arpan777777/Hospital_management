@@ -1,0 +1,39 @@
+{% extends "appointments/base.html" %}
+{% block title %}Add Patient{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h1 class="h4 mb-3">Add Patient</h1>
+
+        <form method="POST" class="row g-3">
+          {% csrf_token %}
+          <div class="col-md-6">
+            <label class="form-label">First Name</label>
+            <input class="form-control" type="text" name="first_name" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Last Name</label>
+            <input class="form-control" type="text" name="last_name" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input class="form-control" type="email" name="email" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input class="form-control" type="text" name="phone_number" required>
+          </div>
+
+          <div class="col-12">
+            <button class="btn btn-success" type="submit">Save</button>
+            <a class="btn btn-outline-secondary" href="{% url 'patient_list' %}">Cancel</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

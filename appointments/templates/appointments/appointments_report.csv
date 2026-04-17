@@ -1,0 +1,12 @@
+Patient,Doctor,Date,Reason,Status
+purushottam yadav,Dr. elon musk (Cardiology),2026-02-14 21:59:56+00:00,COVID,completed
+purushottam kanchan,Dr. elon musk (Cardiology),2026-02-20 00:00:00+00:00,,scheduled
+rijan binisha,Dr. ishow speed (Anesthesiology),2026-02-11 00:00:00+00:00,headache,completed
+rijan binisha,Dr. JAMES LEE (Gastroenterology),2026-02-17 06:00:00+00:00,neck pain,scheduled
+rijan binisha,Dr. ANNA KIAR (General Surgery),2026-02-21 22:06:18+00:00,fever,scheduled
+tapan rai,Dr. Atul Gawande (General Surgery),2026-03-01 18:00:00+00:00,COVID,scheduled
+tapan rai,Dr. Alexey V. Kotov (Anesthesiology),2026-03-26 12:00:00+00:00,stomach pain,scheduled
+tapan rai,Dr. JAMES LEE (Gastroenterology),2026-03-24 12:00:00+00:00,headache,scheduled
+dai hora,Dr. JAMES LEE (Gastroenterology),2026-03-16 00:00:00+00:00,tonsil,scheduled
+tapan rai,Dr. Sheila Dobee (Dentistry / Oral Surgery),2026-03-18 00:00:00+00:00,,scheduled
+tapan rai,Dr. elon musk (Cardiology),2026-02-11 12:00:00+00:00,,scheduled

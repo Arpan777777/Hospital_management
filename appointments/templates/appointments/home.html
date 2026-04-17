@@ -1,0 +1,346 @@
+{% extends "appointments/base.html" %}
+{% load static %}
+{% block title %}Home — Hospital System{% endblock %}
+
+{% block content %}
+
+<style>
+  .hero {
+    background: linear-gradient(135deg, #0a1628 0%, #112240 60%, #0d2847 100%);
+    border-radius: 20px;
+    padding: 4rem 3rem;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(13,148,136,0.2), transparent 70%);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 30%;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(212,168,83,0.1), transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(13,148,136,0.15);
+    border: 1px solid rgba(13,148,136,0.3);
+    color: #5eead4;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .hero-title span {
+    color: #5eead4;
+  }
+  .hero-subtitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 1rem;
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+  .hero-stat {
+    text-align: center;
+    padding: 1rem 1.5rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+  }
+  .hero-stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #5eead4;
+  }
+  .hero-stat-label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .feature-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 1.75rem;
+    height: 100%;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 48px rgba(0,0,0,0.1);
+    border-color: #0d9488;
+    color: inherit;
+    text-decoration: none;
+  }
+  .feature-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 1.25rem;
+  }
+  .feature-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0a1628;
+    margin-bottom: 0.5rem;
+  }
+  .feature-desc {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0d9488;
+    margin-bottom: 0.5rem;
+  }
+  .section-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #0a1628;
+    margin-bottom: 0.5rem;
+  }
+</style>
+
+<!-- Hero Section -->
+<div class="hero fade-in fade-in-1">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-6" style="position:relative;z-index:1;">
+
+      <div class="hero-badge">
+        <i class="bi bi-shield-check"></i> Trusted Healthcare Platform
+      </div>
+
+      <h1 class="hero-title">
+        Modern Care,<br>
+        <span>Smarter Scheduling.</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        An AI-powered hospital management system designed to connect patients with the right doctors at the right time — seamlessly and securely.
+      </p>
+
+      {% if request.user.is_authenticated %}
+        <div class="d-flex gap-3 flex-wrap">
+          {% if request.user.profile.role == "ADMIN" or request.user.profile.role == "DOCTOR" %}
+            <a href="{% url 'patient_list' %}" class="btn btn-primary px-4 py-2">
+              <i class="bi bi-people me-2"></i>Manage Patients
+            </a>
+            <a href="{% url 'ai_analytics' %}" class="btn px-4 py-2" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;">
+              <i class="bi bi-graph-up me-2"></i>View Analytics
+            </a>
+          {% else %}
+            <a href="{% url 'book_appointment' %}" class="btn btn-primary px-4 py-2">
+              <i class="bi bi-calendar-plus me-2"></i>Book Appointment
+            </a>
+            <a href="{% url 'ai_recommend' %}" class="btn px-4 py-2" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;">
+              <i class="bi bi-stars me-2"></i>AI Recommend
+            </a>
+          {% endif %}
+        </div>
+      {% else %}
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{% url 'login' %}" class="btn btn-primary px-4 py-2">
+            <i class="bi bi-box-arrow-in-right me-2"></i>Login to Portal
+          </a>
+          <a href="{% url 'register' %}" class="btn px-4 py-2" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#fff;">
+            <i class="bi bi-person-plus me-2"></i>Register
+          </a>
+        </div>
+      {% endif %}
+
+      <!-- Stats row -->
+      <div class="row g-3 mt-4">
+        <div class="col-4">
+          <div class="hero-stat">
+            <div class="hero-stat-number">AI</div>
+            <div class="hero-stat-label">Powered</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="hero-stat">
+            <div class="hero-stat-number">3</div>
+            <div class="hero-stat-label">Roles</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="hero-stat">
+            <div class="hero-stat-number">24/7</div>
+            <div class="hero-stat-label">Access</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-lg-6">
+      <div id="heroCarousel" class="carousel carousel-fade slide rounded-3 overflow-hidden shadow-lg" data-bs-ride="carousel" data-bs-interval="3500" style="position:relative;z-index:1;">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="{% static 'img/hero2.jpg' %}" class="d-block w-100" style="height:320px;object-fit:cover;" alt="">
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'img/hero6.jpg' %}" class="d-block w-100" style="height:320px;object-fit:cover;" alt="">
+          </div>
+          <div class="carousel-item">
+            <img src="{% static 'img/hero7.jpg' %}" class="d-block w-100" style="height:320px;object-fit:cover;" alt="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="mb-3 fade-in fade-in-2">
+  <div class="section-label">Quick Access</div>
+  <h2 class="section-heading">What would you like to do?</h2>
+</div>
+
+<div class="row g-4 fade-in fade-in-3">
+  {% if request.user.is_authenticated %}
+    {% if request.user.profile.role == "ADMIN" or request.user.profile.role == "DOCTOR" %}
+
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'patient_list' %}" class="feature-card">
+          <div class="feature-icon" style="background:rgba(13,148,136,0.1);color:#0d9488;">
+            <i class="bi bi-people-fill"></i>
+          </div>
+          <div class="feature-title">Patient Directory</div>
+          <p class="feature-desc">View and manage all registered hospital patients.</p>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'appointment_list' %}" class="feature-card">
+          <div class="feature-icon" style="background:rgba(10,22,40,0.08);color:#0a1628;">
+            <i class="bi bi-calendar2-week-fill"></i>
+          </div>
+          <div class="feature-title">All Appointments</div>
+          <p class="feature-desc">Track and manage all scheduled visits across the hospital.</p>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'ai_analytics' %}" class="feature-card">
+          <div class="feature-icon" style="background:rgba(212,168,83,0.12);color:#d4a853;">
+            <i class="bi bi-graph-up-arrow"></i>
+          </div>
+          <div class="feature-title">AI Analytics</div>
+          <p class="feature-desc">View peak hours, busiest days and demand trends.</p>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'add_availability' %}" class="feature-card">
+          <div class="feature-icon" style="background:rgba(5,150,105,0.1);color:#059669;">
+            <i class="bi bi-calendar-plus-fill"></i>
+          </div>
+          <div class="feature-title">Add Slots</div>
+          <p class="feature-desc">Create new doctor availability slots for patient booking.</p>
+        </a>
+      </div>
+
+    {% else %}
+
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'book_appointment' %}" class="feature-card">
+          <div class="feature-icon" style="background:rgba(13,148,136,0.1);color:#0d9488;">
+            <i class="bi bi-plus-circle-fill"></i>
+          </div>
+          <div class="feature-title">Book Appointment</div>
+          <p class="feature-desc">Choose a doctor and available time slot for your visit.</p>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'my_appointments' %}" class="feature-card">
+          <div class="feature-icon" style="background:rgba(10,22,40,0.08);color:#0a1628;">
+            <i class="bi bi-clock-history"></i>
+          </div>
+          <div class="feature-title">My Appointments</div>
+          <p class="feature-desc">View and manage your upcoming scheduled visits.</p>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'ai_recommend' %}" class="feature-card">
+          <div class="feature-icon" style="background:rgba(212,168,83,0.12);color:#d4a853;">
+            <i class="bi bi-stars"></i>
+          </div>
+          <div class="feature-title">AI Recommend</div>
+          <p class="feature-desc">Let our AI find the perfect doctor and slot for your symptoms.</p>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-lg-3">
+        <a href="{% url 'my_medical_records' %}" class="feature-card">
+          <div class="feature-icon" style="background:rgba(5,150,105,0.1);color:#059669;">
+            <i class="bi bi-file-earmark-medical-fill"></i>
+          </div>
+          <div class="feature-title">My Reports</div>
+          <p class="feature-desc">Access your medical reports with AI term explanations.</p>
+        </a>
+      </div>
+
+    {% endif %}
+  {% else %}
+    <div class="col-md-6 col-lg-3">
+      <a href="{% url 'login' %}" class="feature-card">
+        <div class="feature-icon" style="background:rgba(13,148,136,0.1);color:#0d9488;">
+          <i class="bi bi-box-arrow-in-right"></i>
+        </div>
+        <div class="feature-title">Login</div>
+        <p class="feature-desc">Access your patient or staff portal securely.</p>
+      </a>
+    </div>
+    <div class="col-md-6 col-lg-3">
+      <a href="{% url 'register' %}" class="feature-card">
+        <div class="feature-icon" style="background:rgba(10,22,40,0.08);color:#0a1628;">
+          <i class="bi bi-person-plus-fill"></i>
+        </div>
+        <div class="feature-title">Register</div>
+        <p class="feature-desc">Create a new patient account to get started.</p>
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

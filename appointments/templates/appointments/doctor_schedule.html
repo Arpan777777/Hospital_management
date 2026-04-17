@@ -1,0 +1,100 @@
+{% extends "appointments/base.html" %}
+{% block title %}My Schedule{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="h3 mb-1" style="color: #101a3a; font-weight: 700;">
+      <i class="bi bi-calendar-check text-primary"></i> My Schedule
+    </h1>
+    <p class="text-muted mb-0">Manage your upcoming patient appointments and daily roster.</p>
+  </div>
+</div>
+
+<div class="card shadow-sm border-0 premium-card">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover table-borderless align-middle mb-0">
+        <thead style="background-color: #f8f9fc;">
+          <tr>
+            <th class="ps-4 py-3">Patient</th>
+            <th class="py-3">Date & Time</th>
+            <th class="py-3">Reason for Visit</th>
+            <th class="pe-4 py-3 text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in appointments %}
+          <tr style="border-bottom: 1px solid #f1f3f8;">
+            <td class="ps-4 py-3">
+              <div class="fw-bold" style="color: #101a3a;">
+                {% if appt.patient %}
+                  {{ appt.patient.first_name }} {{ appt.patient.last_name }}
+                {% else %}
+                  {{ appt.user.username }}
+                {% endif %}
+              </div>
+            </td>
+            <td class="py-3">
+              <div class="fw-medium text-primary">
+                <i class="bi bi-calendar-event"></i> {{ appt.appointment_date|date:"M d, Y" }}
+              </div>
+              <div class="small text-muted mt-1">
+                <i class="bi bi-clock"></i> {{ appt.appointment_date|time:"g:i a" }}
+              </div>
+            </td>
+            <td class="py-3 text-muted" style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              {{ appt.reason|default:"No specific reason provided" }}
+            </td>
+            <td class="pe-4 py-3 text-end">
+              <div class="d-flex justify-content-end align-items-center gap-2">
+                
+               {% if appt.status == 'completed' %}
+  <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary px-3 py-2 rounded-pill fw-medium">
+    <i class="bi bi-check-all"></i> Completed
+  </span>
+  <a href="{% url 'reopen_appointment' appt.id %}" 
+     class="btn btn-sm btn-outline-warning fw-medium px-3"
+     style="border-radius:6px;"
+     onclick="return confirm('Reopen this appointment?');">
+    <i class="bi bi-arrow-counterclockwise"></i> Undo
+  </a>
+{% else %}
+  {% if appt.patient %}
+    <a href="{% url 'add_medical_record' appt.patient.id %}" 
+       class="btn btn-sm btn-outline-primary fw-medium px-3"
+       style="border-radius:6px;">
+      <i class="bi bi-file-earmark-plus"></i> Write Report
+    </a>
+  {% endif %}
+  <a href="{% url 'complete_appointment' appt.id %}" 
+     class="btn btn-sm btn-success shadow-sm fw-medium px-3" 
+     style="border-radius: 6px;">
+    <i class="bi bi-check-circle"></i> Complete
+  </a>
+  <a href="{% url 'cancel_appointment' appt.id %}" 
+     class="btn btn-sm btn-outline-danger shadow-sm fw-medium px-3" 
+     style="border-radius: 6px;" 
+     onclick="return confirm('Are you sure you want to cancel this appointment?');">
+    <i class="bi bi-x-circle"></i> Cancel
+  </a>
+{% endif %}
+
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center py-5 text-muted">
+              <i class="bi bi-cup-hot fs-1 d-block mb-3 text-primary opacity-50"></i>
+              <h5 class="fw-semibold">No appointments right now</h5>
+              <p class="mb-0">Your schedule is currently clear. Enjoy your break!</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
