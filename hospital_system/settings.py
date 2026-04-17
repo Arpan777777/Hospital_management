@@ -57,6 +57,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'hospital_system.urls'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'your_gmail@gmail.com'       # Your Gmail address
+EMAIL_HOST_PASSWORD = 'your_app_password_here'  # Gmail App Password (not your normal password)
+DEFAULT_FROM_EMAIL = 'Hospital System <your_gmail@gmail.com>'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

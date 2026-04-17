@@ -97,8 +97,7 @@
       </div>
       <div class="text-end">
         <div class="score-badge mb-2"><i class="bi bi-graph-up-arrow"></i> Score: {{ score|floatformat:2 }}</div><br>
-        <a href="{% url 'book_appointment' %}?slot_id={{ slot.id }}" class="btn-book">Book this slot</a>
-      </div>
+        <a href="{% url 'book_appointment' %}?slot_id={{ slot.id }}&reason={{ reason|urlencode }}" class="btn-book-slot">Book this slot</a>      </div>
     </div>
   </div>
   {% endfor %}
@@ -114,9 +113,15 @@ window.addEventListener('load', function() {
   var status = document.getElementById('speechStatus');
   var kwBox = document.getElementById('kwBox');
 
-  {% if recommended %}
-    {% for slot,score,exp in recommended %}{% if forloop.first %}{% if exp.extracted_keywords %}kwBox.style.display='block';{% endif %}{% endif %}{% endfor %}
-  {% endif %}
+{% if recommended %}
+  {% for slot,score,exp in recommended %}
+    {% if forloop.first %}
+      {% if exp.extracted_keywords %}
+        kwBox.style.display = 'block';
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
 
   var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRec) {
@@ -210,4 +215,4 @@ window.addEventListener('load', function() {
 
 });
 </script>
-{% endblock %}
+  {% endblock %}

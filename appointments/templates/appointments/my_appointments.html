@@ -2,14 +2,36 @@
 {% block title %}My Appointments{% endblock %}
 
 {% block content %}
+
+<style>
+  @media print {
+    body * { visibility: hidden; }
+    #printArea, #printArea * { visibility: visible; }
+    #printArea { position: fixed; top: 0; left: 0; width: 100%; padding: 30px; }
+  }
+</style>
+
+<!-- Hidden Print Area -->
+<div id="printArea" style="display:none;">
+  <div style="text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid #0d9488;">
+    <h2 style="color:#0a1628;margin:0;">🏥 Hospital System</h2>
+    <p style="color:#64748b;margin:5px 0 0;">Appointment Confirmation</p>
+  </div>
+  <div id="printContent"></div>
+  <div style="margin-top:30px;padding-top:15px;border-top:1px solid #e2e8f0;font-size:0.8rem;color:#94a3b8;">
+    Printed on: <span id="printDate"></span> — Please bring this to your appointment.
+  </div>
+</div>
+
 <div class="d-flex justify-content-between align-items-center mb-4">
   <div>
-    <h1 class="h3 mb-1" style="color: #101a3a; font-weight: 700;">
+    <h1 class="h3 mb-1" style="color:#101a3a;font-weight:700;">
       <i class="bi bi-clock-history text-primary"></i> My Appointments
     </h1>
     <p class="text-muted mb-0">View and manage your scheduled visits.</p>
   </div>
-  <a href="{% url 'book_appointment' %}" class="btn btn-primary px-4 py-2 shadow-sm" style="background: linear-gradient(135deg,#2f5bff,#7b2cff); border: none; border-radius: 8px;">
+  <a href="{% url 'book_appointment' %}" class="btn btn-primary px-4 py-2 shadow-sm"
+     style="background:linear-gradient(135deg,#2f5bff,#7b2cff);border:none;border-radius:8px;">
     <i class="bi bi-plus-circle"></i> Book New
   </a>
 </div>
@@ -18,7 +40,7 @@
   <div class="card-body p-0">
     <div class="table-responsive">
       <table class="table table-hover table-borderless align-middle mb-0">
-        <thead style="background-color: #f8f9fc;">
+        <thead style="background-color:#f8f9fc;">
           <tr>
             <th class="ps-4 py-3">Doctor</th>
             <th class="py-3">Date & Time</th>
@@ -28,9 +50,9 @@
         </thead>
         <tbody>
           {% for appt in appointments %}
-          <tr style="border-bottom: 1px solid #f1f3f8;">
+          <tr style="border-bottom:1px solid #f1f3f8;">
             <td class="ps-4 py-3">
-              <div class="fw-bold" style="color: #101a3a;">
+              <div class="fw-bold" style="color:#101a3a;">
                 <i class="bi bi-person-badge text-primary"></i> {{ appt.slot.doctor }}
               </div>
               <div class="small text-muted">{{ appt.slot.doctor.specialization }}</div>
@@ -43,7 +65,7 @@
                 <i class="bi bi-clock"></i> {{ appt.appointment_date|time:"g:i a" }}
               </div>
             </td>
-            <td class="py-3 text-muted" style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            <td class="py-3 text-muted" style="max-width:250px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
               {{ appt.reason|default:"No reason provided" }}
             </td>
             <td class="pe-4 py-3 text-end">
@@ -56,9 +78,22 @@
                   <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill fw-medium">
                     Confirmed
                   </span>
-                  <a href="{% url 'cancel_appointment' appt.id %}" 
-                     class="btn btn-sm btn-outline-danger shadow-sm fw-medium" 
-                     style="border-radius: 6px;" 
+                  <!-- Print Button - uses data attributes to avoid quote issues -->
+                  <button class="btn btn-sm btn-outline-secondary shadow-sm fw-medium"
+                    style="border-radius:6px;"
+                    data-doctor="{{ appt.slot.doctor }}"
+                    data-spec="{{ appt.slot.doctor.specialization }}"
+                    data-date="{{ appt.appointment_date|date:'M d, Y' }}"
+                    data-time="{{ appt.appointment_date|time:'g:i a' }}"
+                    data-reason="{{ appt.reason|default:'No reason provided' }}"
+                    data-status="{{ appt.status }}"
+                    onclick="printFromData(this)">
+                    <i class="bi bi-printer"></i> Print
+                  </button>
+                  <!-- Cancel Button -->
+                  <a href="{% url 'cancel_appointment' appt.id %}"
+                     class="btn btn-sm btn-outline-danger shadow-sm fw-medium"
+                     style="border-radius:6px;"
                      onclick="return confirm('Are you sure you want to cancel this appointment?');">
                     <i class="bi bi-x-circle"></i> Cancel
                   </a>
@@ -72,7 +107,8 @@
               <i class="bi bi-calendar-x fs-1 d-block mb-3 text-primary opacity-50"></i>
               <h5 class="fw-semibold">No appointments yet</h5>
               <p class="mb-3">You have no appointments scheduled.</p>
-              <a href="{% url 'book_appointment' %}" class="btn btn-primary px-4" style="background: linear-gradient(135deg,#2f5bff,#7b2cff); border: none;">
+              <a href="{% url 'book_appointment' %}" class="btn btn-primary px-4"
+                 style="background:linear-gradient(135deg,#2f5bff,#7b2cff);border:none;">
                 Book your first appointment
               </a>
             </td>
@@ -83,4 +119,52 @@
     </div>
   </div>
 </div>
+
+<script>
+function printFromData(btn) {
+  var doctor  = btn.getAttribute('data-doctor');
+  var spec    = btn.getAttribute('data-spec');
+  var date    = btn.getAttribute('data-date');
+  var time    = btn.getAttribute('data-time');
+  var reason  = btn.getAttribute('data-reason');
+  var status  = btn.getAttribute('data-status');
+
+  document.getElementById('printContent').innerHTML =
+    '<table style="width:100%;border-collapse:collapse;margin-top:20px;">' +
+      '<tr style="background:#f0fdfa;">' +
+        '<td style="padding:12px 16px;font-weight:bold;color:#64748b;width:35%;border:1px solid #e2e8f0;">Doctor</td>' +
+        '<td style="padding:12px 16px;color:#0a1628;border:1px solid #e2e8f0;">Dr. ' + doctor + '</td>' +
+      '</tr>' +
+      '<tr>' +
+        '<td style="padding:12px 16px;font-weight:bold;color:#64748b;border:1px solid #e2e8f0;">Specialization</td>' +
+        '<td style="padding:12px 16px;color:#0a1628;border:1px solid #e2e8f0;">' + spec + '</td>' +
+      '</tr>' +
+      '<tr style="background:#f0fdfa;">' +
+        '<td style="padding:12px 16px;font-weight:bold;color:#64748b;border:1px solid #e2e8f0;">Date</td>' +
+        '<td style="padding:12px 16px;color:#0a1628;border:1px solid #e2e8f0;">' + date + '</td>' +
+      '</tr>' +
+      '<tr>' +
+        '<td style="padding:12px 16px;font-weight:bold;color:#64748b;border:1px solid #e2e8f0;">Time</td>' +
+        '<td style="padding:12px 16px;color:#0a1628;border:1px solid #e2e8f0;">' + time + '</td>' +
+      '</tr>' +
+      '<tr style="background:#f0fdfa;">' +
+        '<td style="padding:12px 16px;font-weight:bold;color:#64748b;border:1px solid #e2e8f0;">Reason</td>' +
+        '<td style="padding:12px 16px;color:#0a1628;border:1px solid #e2e8f0;">' + reason + '</td>' +
+      '</tr>' +
+      '<tr>' +
+        '<td style="padding:12px 16px;font-weight:bold;color:#64748b;border:1px solid #e2e8f0;">Status</td>' +
+        '<td style="padding:12px 16px;color:#059669;font-weight:600;border:1px solid #e2e8f0;">✅ ' + status + '</td>' +
+      '</tr>' +
+    '</table>' +
+    '<div style="margin-top:20px;padding:15px;background:#f0fdfa;border-radius:8px;border-left:4px solid #0d9488;font-size:0.85rem;color:#0f766e;">' +
+      '<strong>📋 Instructions:</strong> Please arrive 10 minutes before your appointment. Bring this confirmation and any relevant medical documents.' +
+    '</div>';
+
+  document.getElementById('printDate').textContent = new Date().toLocaleString();
+  document.getElementById('printArea').style.display = 'block';
+  window.print();
+  document.getElementById('printArea').style.display = 'none';
+}
+</script>
+
 {% endblock %}

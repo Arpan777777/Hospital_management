@@ -164,4 +164,15 @@
     </div>
   </div>
 </div>
+
+<script>
+  window.addEventListener('load', function() {
+    const reasonField = document.querySelector('input[name="reason"], textarea[name="reason"]');
+    const prefill = "{{ prefill_reason }}";
+    if (reasonField && prefill) {
+      reasonField.value = prefill;
+    }
+  });
+</script>
+
 {% endblock %}

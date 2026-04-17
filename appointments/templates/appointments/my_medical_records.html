@@ -187,8 +187,13 @@
 </div>
 
 <script>
-  async function explainTerm(el) {
-    const term = el.innerText.trim();
+async function explainTerm(el) {
+    const fullText = el.innerText.trim();
+    // Extract first meaningful medical word (skip common words)
+    const skipWords = ['prescribed','recommended','take','use','apply','the','a','an','for','and','or','with','days','of','bed','rest','increased','fluid','intake','mg','twice','daily','once'];
+    const words = fullText.split(/[\s,;.]+/).filter(w => w.length > 3);
+    const medicalWord = words.find(w => !skipWords.includes(w.toLowerCase())) || words[0] || fullText;
+    const term = medicalWord.trim();
     if (!term) return;
 
     document.getElementById('explainerTerm').innerText = term;

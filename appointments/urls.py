@@ -29,8 +29,10 @@ urlpatterns = [
     path('add-availability/', views.add_availability, name='add_availability'),
     path('profile/', views.patient_profile, name='patient_profile'),
     path('patient/<int:patient_id>/add-record/', views.add_medical_record, name='add_medical_record'),
+    path('availability/calendar/', views.availability_calendar, name='availability_calendar'),
     path("appointment/<int:appointment_id>/reopen/", views.reopen_appointment, name="reopen_appointment"),
 ]
+
 
 
 
